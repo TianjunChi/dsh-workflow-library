@@ -1,0 +1,10 @@
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+const root=new URL('./',import.meta.url);
+const model=await readFile(new URL('lib/model.js',root),'utf8');
+const body=await readFile(new URL('src/client-body.js',root),'utf8');
+const exports=[...model.matchAll(/^export (?:const|function) (\w+)/gm)].map(m=>m[1]);
+const wrapped=`window.__ModuleLoader__.load({id:"@monster_harryc/dsh-workflow-library",factory:(require)=>{\nconst exports={};\nconst model=(()=>{\n${model.replace(/^export /gm,'')}\nreturn {${exports.join(',')}};\n})();\n${body}\nreturn exports;\n}});\n`;
+await mkdir(new URL('lib/',root),{recursive:true});
+await writeFile(new URL('lib/client.js',root),wrapped);
+console.log('Built',fileURLToPath(new URL('lib/client.js',root)));

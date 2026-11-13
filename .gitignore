@@ -1,0 +1,10 @@
+node_modules/
+.npm-cache/
+*.tgz
+*.log
+.env
+.env.*
+.npmrc
+coverage/
+verification/
+library.json

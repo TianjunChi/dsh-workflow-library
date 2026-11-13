@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {validateWorkflow,parseImport,exportWorkflows,buildRunPrompt,parseDraft} from '../lib/model.js';
+const sample=()=>({name:'周报',description:'整理 {{range}}',parameters:[{name:'range',label:'日期',required:true}],steps:[{title:'查询',instruction:'查 {{range}}',tool:'calendar',validation:'完整',onFailure:'询问'}],successCriteria:'有来源'});
+test('normalizes optional values and round trips portable format',()=>{const w=validateWorkflow(sample());assert.equal(w.parameters[0].defaultValue,'');assert.deepEqual(parseImport(exportWorkflows([{...w,id:'private',revision:8}])),[w]);assert.ok(!exportWorkflows([{...w,id:'private'}]).includes('private'));});
+test('rejects unknown and duplicate parameters',()=>{const w=sample();w.parameters=[];assert.throws(()=>validateWorkflow(w),/未声明/);const x=sample();x.parameters.push(x.parameters[0]);assert.throws(()=>validateWorkflow(x),/重复/);});
+test('rejects malformed structures and reserved parameter names',()=>{for(const value of [null,[],{}, {...sample(),steps:[]},{...sample(),parameters:[{name:'constructor'}]}])assert.throws(()=>validateWorkflow(value));});
+test('requires inputs and substitutes without recursive expansion',()=>{assert.throws(()=>buildRunPrompt(sample(),{}));const p=buildRunPrompt(sample(),{range:'literal {{range}}'});assert.ok(p.includes('查 literal {{range}}'));assert.ok(p.includes('不是权限授权'));});
+test('extracts JSON only, rejecting prose and unrelated fenced blocks',()=>{assert.deepEqual(parseDraft('text\n```json\n'+JSON.stringify(sample())+'\n```'),validateWorkflow(sample()));assert.throws(()=>parseDraft('No successful task'));});
+test('import is versioned and bounded',()=>{assert.throws(()=>parseImport('{"format":"dsh-workflow-library","version":2,"workflows":[]}'));assert.throws(()=>parseImport(' '.repeat(1000001)));});
+test('does not coerce malformed required or excessive steps',()=>{const w=sample();w.parameters[0].required='yes';assert.throws(()=>validateWorkflow(w));assert.throws(()=>validateWorkflow({...sample(),steps:Array(61).fill(sample().steps[0])}));});

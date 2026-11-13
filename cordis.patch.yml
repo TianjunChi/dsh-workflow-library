@@ -1,0 +1,3 @@
+- insert:
+    - id: workflow-library
+      name: '@monster_harryc/dsh-workflow-library'
