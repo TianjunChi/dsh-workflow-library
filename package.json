@@ -1,13 +1,13 @@
 {
-  "name": "@monster_harryc/dsh-workflow-library",
+  "name": "dsh-diy-workflow",
   "author": {"name": "Chi Tianjun", "url": "https://github.com/TianjunChi"},
   "license": "MIT",
   "homepage": "https://github.com/TianjunChi/dsh-workflow-library#readme",
   "repository": {"type": "git", "url": "git+https://github.com/TianjunChi/dsh-workflow-library.git"},
   "bugs": {"url": "https://github.com/TianjunChi/dsh-workflow-library/issues"},
   "publishConfig": {"access": "public", "registry": "https://registry.npmjs.org/"},
-  "version": "0.1.0",
-  "description": "Save, review, export and reuse successful DSH task workflows",
+  "version": "0.2.1",
+  "description": "将成功任务提炼为可复用工作流，支持本地保存、参数化执行和 JSON 导入导出。",
   "type": "module",
   "main": "lib/index.js",
   "exports": {".": "./lib/index.js", "./client": "./lib/client.js", "./package.json": "./package.json"},
@@ -15,7 +15,7 @@
   "scripts": {"build": "node build.mjs", "test": "node --test --test-isolation=none test/*.test.mjs"},
   "engines": {"dsh": "0.2.2-rc.1", "node": ">=22"},
   "dsh": {
-    "client": {"platform": "web", "inject": ["@deepseek-ai/dsh-client-ui-sidebar", "@deepseek-ai/dsh-client-ui-renderer", "@deepseek-ai/dsh-client-ui-session", "@deepseek-ai/dsh-api-session-controller", "@deepseek-ai/dsh-client-ui-workspace"]},
+    "client": {"platform": "web", "inject": ["@deepseek-ai/dsh-client-ui-sidebar", "@deepseek-ai/dsh-client-ui-renderer", "@deepseek-ai/dsh-client-ui-session", "@deepseek-ai/dsh-api-session-controller", "@deepseek-ai/dsh-client-ui-workspace", "@deepseek-ai/dsh-api-workspace-controller"]},
     "bundle": {"patch": "./cordis.patch.yml"}
   }
 }
