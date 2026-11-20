@@ -100,7 +100,7 @@ test('authority validation requires loopback socket and exact host/port', () => 
 async function harness(t, store) {
   let route;
   let disposed = false;
-  const dispose = registerWorkflowRoutes({ webServer: { port: 52040, register(value) { route = value; return () => { disposed = true; }; } } }, store);
+  const dispose = registerWorkflowRoutes({ connection: { requestRejection: () => undefined }, webServer: { port: 52040, register(value) { route = value; return () => { disposed = true; }; } } }, store);
   t.after(dispose);
   assert.equal(route.kind, 'exact');
   assert.equal(route.path, '/api/workflow-library');
